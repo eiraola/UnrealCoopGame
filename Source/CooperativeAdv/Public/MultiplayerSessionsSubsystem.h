@@ -20,4 +20,19 @@ public:
 	virtual void Deinitialize() override;
 	void PrintString(const FString& message);
 	IOnlineSessionPtr sessionInterface;
+	UFUNCTION(BlueprintCallable)
+		void CreateServer(FString serverName);
+	UFUNCTION(BlueprintCallable)
+		void FindServer(FString serverName);
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccesful);
+	void OnDestroySessionComplete(FName SessionName, bool bWasSuccesful);
+	void OnFindSessionComplete(bool bWasSuccesful);
+	void OnJoinSessionComplete(FName sessionName, EOnJoinSessionCompleteResult::Type result);
+private:
+	bool createServerAfterDestroy;
+	FString destroyServername;
+	FString serverNameToFind;
+	FName mySessionName;
+	TSharedPtr<FOnlineSessionSearch> sessionSearch;
+		
 };
