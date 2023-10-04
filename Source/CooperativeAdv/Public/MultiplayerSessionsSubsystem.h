@@ -7,6 +7,8 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "MultiplayerSessionsSubsystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerCreateDelegate, bool, WasSuccesful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerFoundDelegate, bool, WasSuccesful);
 /**
  * 
  */
@@ -34,5 +36,9 @@ private:
 	FString serverNameToFind;
 	FName mySessionName;
 	TSharedPtr<FOnlineSessionSearch> sessionSearch;
+	UPROPERTY(BlueprintAssignable)
+		FServerCreateDelegate ServerCreateDel;
+	UPROPERTY(BlueprintAssignable)
+		FServerFoundDelegate ServerFoundDel;
 		
 };

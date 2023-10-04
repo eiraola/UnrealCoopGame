@@ -40,6 +40,7 @@ void UMultiplayerSessionsSubsystem::CreateServer(FString serverName)
 	if (serverName.IsEmpty())
 	{
 		PrintString("Server name cannot be empty!"); 
+		ServerCreateDel.Broadcast(false);
 		return;
 	}
 	
@@ -96,6 +97,7 @@ void UMultiplayerSessionsSubsystem::FindServer(FString serverName)
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccesful)
 {
 	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), bWasSuccesful));
+	ServerCreateDel.Broadcast(true);
 	if (bWasSuccesful)
 	{
 		GetWorld()->ServerTravel("/Game/_CoopAdv/Maps/Lobby?listen");
@@ -116,10 +118,12 @@ void UMultiplayerSessionsSubsystem::OnFindSessionComplete(bool bWasSuccesful)
 	if (!bWasSuccesful)
 	{
 		PrintString(FString::Printf(TEXT("Someting went wrong while looking for sessions")));
+		ServerFoundDel.Broadcast(false);
 		return;
 	}
 	if (serverNameToFind.IsEmpty())
 	{
+		ServerFoundDel.Broadcast(false);
 		return;
 	}
 	TArray<FOnlineSessionSearchResult> results = sessionSearch->SearchResults;
@@ -127,6 +131,7 @@ void UMultiplayerSessionsSubsystem::OnFindSessionComplete(bool bWasSuccesful)
 	if (results.Num() <= 0)
 	{
 		PrintString(FString::Printf(TEXT("Zero Sessions found.")));
+		ServerFoundDel.Broadcast(false);
 		return;
 	}
 	for (FOnlineSessionSearchResult result :results )
@@ -149,6 +154,7 @@ void UMultiplayerSessionsSubsystem::OnFindSessionComplete(bool bWasSuccesful)
 	if (!correctResult)
 	{
 		PrintString(FString::Printf(TEXT("Couldnt find server %s"), *serverNameToFind)); 
+		ServerFoundDel.Broadcast(false);
 		return;
 	}
 	PrintString(FString::Printf(TEXT("xD sessions found")));
@@ -160,24 +166,25 @@ void UMultiplayerSessionsSubsystem::OnJoinSessionComplete(FName sessionName, EOn
 	PrintString("We are here"); 
 	if (result != EOnJoinSessionCompleteResult::Success)
 	{
+		ServerFoundDel.Broadcast(false);
 		PrintString("Couldnt join server"); return;
 	}
 	FString Adress = "";
 	bool Success = sessionInterface->GetResolvedConnectString(mySessionName, Adress);
 	if (!Success)
 	{
+		ServerFoundDel.Broadcast(false);
 		PrintString("Couldnt resolve conection");
 		return;
 	}
 	APlayerController* playerController = GetGameInstance()->GetFirstLocalPlayerController();
 	if (playerController)
 	{
-		PrintString(FString::Printf(TEXT("We are about to travel to %s"), *Adress));
-		PrintString("We have player controller");
+		ServerFoundDel.Broadcast(true);
 		playerController->ClientTravel(Adress, ETravelType::TRAVEL_Absolute);
 		return;
 	}
-	PrintString("We have not player controller");
+	ServerFoundDel.Broadcast(false);
 }
 void UMultiplayerSessionsSubsystem::PrintString(const FString& message)
 {
