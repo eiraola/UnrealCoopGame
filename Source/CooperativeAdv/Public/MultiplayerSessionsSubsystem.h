@@ -18,6 +18,8 @@ class COOPERATIVEADV_API UMultiplayerSessionsSubsystem : public UGameInstanceSub
 	GENERATED_BODY()
 public:
 	UMultiplayerSessionsSubsystem();
+	UPROPERTY(BlueprintReadWrite)
+		FString mainMapName;
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	void PrintString(const FString& message);

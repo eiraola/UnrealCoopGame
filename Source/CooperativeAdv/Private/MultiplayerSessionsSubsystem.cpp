@@ -8,6 +8,7 @@ UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem() {
 	createServerAfterDestroy = false;
 	serverNameToFind = "";
 	PrintString("MSS Constructor"); 
+	mainMapName = "";
 	mySessionName = FName("Co-op Adventure Session Name");
 }
 void UMultiplayerSessionsSubsystem::Initialize(FSubsystemCollectionBase& Collection){ 
@@ -100,7 +101,7 @@ void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, b
 	ServerCreateDel.Broadcast(true);
 	if (bWasSuccesful)
 	{
-		GetWorld()->ServerTravel("/Game/_CoopAdv/Maps/Lobby?listen");
+		GetWorld()->ServerTravel(FString::Printf(TEXT("%s?listen"),*mainMapName));
 	}
 }
 void UMultiplayerSessionsSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccesful)
