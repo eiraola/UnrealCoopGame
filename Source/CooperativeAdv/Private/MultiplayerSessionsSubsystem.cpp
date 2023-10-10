@@ -97,7 +97,7 @@ void UMultiplayerSessionsSubsystem::FindServer(FString serverName)
 }
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccesful)
 {
-	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), bWasSuccesful));
+	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d for session %s"), bWasSuccesful, SessionName));
 	ServerCreateDel.Broadcast(true);
 	if (bWasSuccesful)
 	{
