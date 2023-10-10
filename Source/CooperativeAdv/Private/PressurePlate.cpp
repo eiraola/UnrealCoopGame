@@ -3,6 +3,7 @@
 
 #include "PressurePlate.h"
 #include "Components/StaticMeshComponent.h"
+#include "Transporter.h"
 // Sets default values
 APressurePlate::APressurePlate()
 {
@@ -14,6 +15,11 @@ APressurePlate::APressurePlate()
 	SetRootComponent(RootComp);
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(GetRootComponent());
+	//transporter = CreateDefaultSubobject<UTransporter>(TEXT("Transporter"));
+	////transporter->AddTriggerActor(this);
+	//transporter->moveTime = 0.25;
+	//transporter->SetPoints(GetActorLocation(), GetActorLocation() + FVector(0.0f, 0.0f, -10.0f));
+	
 	auto MeshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("/Game/Asian_Village/meshes/building/SM_column_decoration_03.SM_column_decoration_03"));
 	if (MeshAsset.Succeeded())
 	{
@@ -35,7 +41,6 @@ APressurePlate::APressurePlate()
 	}
 }
 
-// Called when the game starts or when spawned
 void APressurePlate::BeginPlay()
 {
 	Super::BeginPlay();
@@ -43,7 +48,6 @@ void APressurePlate::BeginPlay()
 	TriggerShape->SetCollisionProfileName(FName("OverlapAll"));
 }
 
-// Called every frame
 void APressurePlate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -58,7 +62,6 @@ void APressurePlate::Tick(float DeltaTime)
 	{
 		AActor* A = overlapingActors[i];
 		FString msg = FString::Printf(TEXT("Name: %s"), *A->GetName());
-		//GEngine->AddOnScreenDebugMessage(-1 ,1.0f, FColor::White, msg);
 		if (A->ActorHasTag("TriggerActor"))
 		{
 			trigerActor = A;
@@ -70,7 +73,6 @@ void APressurePlate::Tick(float DeltaTime)
 		if (!activated)
 		{
 			activated = true;
-			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, TEXT("Activated"));
 			OnActivated.Broadcast();
 		}
 	}
@@ -78,7 +80,6 @@ void APressurePlate::Tick(float DeltaTime)
 		if (activated)
 		{
 			activated = false;
-			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::White, TEXT("Dectivated"));
 			OnDeactivated.Broadcast();
 		}
 	}
