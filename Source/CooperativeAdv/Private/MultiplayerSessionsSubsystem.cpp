@@ -70,6 +70,8 @@ void UMultiplayerSessionsSubsystem::CreateServer(FString serverName)
 	{
 		isLAN = false;
 	}
+	FString msg = FString::Printf(TEXT("[IsLan = %d] [Subsistem = %s] [Server name = %s] [Session name = %s]" ),isLAN, *onlineSubsystem->GetSubsystemName().ToString(), *serverName, *mySessionName.ToString());
+	PrintString(msg);
 	onlineSessionSettings.bIsLANMatch = isLAN;
 	onlineSessionSettings.Set(FName("SERVER_NAME"), serverName,EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	sessionInterface->CreateSession(0, mySessionName, onlineSessionSettings);
@@ -97,10 +99,11 @@ void UMultiplayerSessionsSubsystem::FindServer(FString serverName)
 }
 void UMultiplayerSessionsSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccesful)
 {
-	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d for session %s"), bWasSuccesful, SessionName));
+	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), bWasSuccesful));
 	ServerCreateDel.Broadcast(true);
 	if (bWasSuccesful)
 	{
+		PrintString(FString::Printf(TEXT("mainMapName : %s"), *mainMapName));
 		GetWorld()->ServerTravel(FString::Printf(TEXT("%s?listen"),*mainMapName));
 	}
 }
